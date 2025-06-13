@@ -129,7 +129,7 @@
 
 <body>
   <div class="form-container">
-    <form action="/proses-login" method="POST">
+    <form id="loginForm">
       <div class="form-header">
         <div class="logo-container">
           <img src="Photo/logo.png" alt="Logo Assetify" />
@@ -172,6 +172,21 @@
 
     usernameInput.addEventListener('input', checkFormState);
     passwordInput.addEventListener('input', checkFormState);
+
+    document.getElementById('loginForm').addEventListener('submit', function (e) {
+      e.preventDefault(); // Mencegah reload halaman
+
+      const username = usernameInput.value.trim();
+      const password = passwordInput.value.trim();
+
+      if (username === "admin" && password === "admin123") {
+        window.location.href = "admin-dashboard.html";
+      } else if (username === "user" && password === "user123") {
+        window.location.href = "user-dashboard.html";
+      } else {
+        alert("Username atau password salah!");
+      }
+    });
   </script>
 </body>
 
