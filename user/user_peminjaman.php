@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Tambah Peminjaman</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-[#ffccf6] min-h-screen p-6 flex items-center justify-center">
+<?php include '../partials/header.php'; ?>
+
+<div class="min-h-screen p-6 flex items-center justify-center bg-[#ffccf6]">
   <div class="max-w-xl w-full bg-white shadow-md rounded-xl p-6">
     <h1 class="text-2xl font-bold text-[#ff8aed] mb-6 text-center">Form Tambah Peminjaman</h1>
     <form>
@@ -20,5 +15,6 @@
       <button type="submit" class="w-full bg-[#ff8aed] text-white py-2 rounded hover:bg-pink-500 transition">Ajukan</button>
     </form>
   </div>
-</body>
-</html>
+</div>
+
+<?php include '../partials/footer.php'; ?>

@@ -32,10 +32,6 @@
 </head>
 <body>
 
-    <div class="content-placeholder">
-        <p>Ini adalah halaman <strong>footer.html</strong> yang dijalankan secara mandiri.</p>
-    </div>
-
     <footer class="app-footer">
         <p>&copy; <span id="currentYear"></span> Assetify. All Rights Reserved.</p>
     </footer>

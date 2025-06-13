@@ -1,13 +1,8 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <title>Riwayat Peminjaman Saya</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-[#ffccf6] min-h-screen p-6">
+<?php include '../partials/header.php'; ?>
+
+<div class="min-h-screen p-6 bg-[#ffccf6]">
   <div class="max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold text-[#ff8aed] mb-6">Riwayat Peminjaman </h1>
+    <h1 class="text-2xl font-bold text-[#ff8aed] mb-6">Riwayat Peminjaman</h1>
     <table class="w-full bg-white border rounded shadow-md">
       <thead class="bg-[#ff8aed]/20">
         <tr>
@@ -30,5 +25,6 @@
       </tbody>
     </table>
   </div>
-</body>
-</html>
+</div>
+
+<?php include '../partials/footer.php'; ?>
