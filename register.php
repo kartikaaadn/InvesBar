@@ -150,8 +150,8 @@
                 <input type="text" id="namaLengkap" name="namaLengkap" placeholder="Masukkan nama lengkap Anda" required>
             </div>
             <div class="form-group">
-                <label for="username">Username</label>
-                <input type="text" id="username" name="username" placeholder="Buat username Anda" required>
+                <label for="username">Email</label>
+                <input type="text" id="email" name="email" placeholder="Masukan email Anda" required>
             </div>
             <div class="form-group">
                 <label for="password">Password</label>
