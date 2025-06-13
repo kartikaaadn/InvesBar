@@ -1,9 +1,8 @@
 <?php
 session_start();
-$_SESSION['role'] = 'admin'; // sementara untuk tes (nanti diganti saat login)
-$role = $_SESSION['role'] ?? null; // Tambahkan ini agar tidak undefined
+$_SESSION['role'] = 'user'; // sementara, sesuaikan saat login
+$role = $_SESSION['role'] ?? null;
 ?>
-
 
 <!DOCTYPE html>
 <html lang="id">
@@ -15,9 +14,7 @@ $role = $_SESSION['role'] ?? null; // Tambahkan ini agar tidak undefined
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet" />
   <style>
-    * {
-      margin: 0; padding: 0; box-sizing: border-box;
-    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
       font-family: 'Poppins', sans-serif;
@@ -38,10 +35,7 @@ $role = $_SESSION['role'] ?? null; // Tambahkan ini agar tidak undefined
       height: 70px;
     }
 
-    .header-logo img {
-      height: 40px;
-      width: auto;
-    }
+    .header-logo img { height: 40px; width: auto; }
 
     .header-nav a {
       color: #555;
@@ -51,8 +45,7 @@ $role = $_SESSION['role'] ?? null; // Tambahkan ini agar tidak undefined
       transition: color 0.2s;
     }
 
-    .header-nav a:hover,
-    .header-nav a.active {
+    .header-nav a:hover, .header-nav a.active {
       color: #FFBAED;
     }
 
@@ -122,9 +115,9 @@ $role = $_SESSION['role'] ?? null; // Tambahkan ini agar tidak undefined
       <?php if ($role === 'admin'): ?>
         <a href="admin/data-peminjaman.php">Data Peminjaman</a>
       <?php else: ?>
-        <a href="form-pengajuan.php">Form Pengajuan</a>
+        <a href="user/user_peminjaman.php">Form Pengajuan</a>
       <?php endif; ?>
-      <a href="admin-riwayat.html">Riwayat</a>
+      <a href="<?= $role === 'admin' ? 'admin-riwayat.html' : 'user/user_riwayat.php' ?>">Riwayat</a>
     </nav>
 
     <div class="header-user">

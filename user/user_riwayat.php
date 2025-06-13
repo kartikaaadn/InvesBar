@@ -7,7 +7,7 @@
 </head>
 <body class="bg-[#ffccf6] min-h-screen p-6">
   <div class="max-w-5xl mx-auto">
-    <h1 class="text-2xl font-bold text-[#ff8aed] mb-6">Riwayat Peminjaman Saya</h1>
+    <h1 class="text-2xl font-bold text-[#ff8aed] mb-6">Riwayat Peminjaman </h1>
     <table class="w-full bg-white border rounded shadow-md">
       <thead class="bg-[#ff8aed]/20">
         <tr>
