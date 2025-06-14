@@ -59,7 +59,6 @@ DELIMITER ;
 ```
 
 **Lokasi File PHP:** `staf/pinjam.php`
-**Screenshot:** ![peminjaman](foto/peminjman.jpg)
 
 ---
 
@@ -86,7 +85,7 @@ if ($stmt->execute()) {
 $stmt->close();
 ?>
 ```
-
+**Screenshot:** ![peminjaman](foto/peminjman.jpg)
 ---
 
 ## 🔄 Trigger
