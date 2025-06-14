@@ -306,7 +306,7 @@ bash
   ![login](foto/login.jpg)
 
 * **Dashboard**
-  ![dasboard](foto/dashboard.jpg)
+  ![dasboard](foto/dasboard.jpg)
 
 * **Riwayat Pengembalian**
   ![status](foto/status.jpg)
