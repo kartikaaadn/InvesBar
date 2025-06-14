@@ -308,8 +308,8 @@ bash
 * **Dashboard**
   ![dasboard](foto/dasboard.jpg)
 
-* **Riwayat Pengembalian**
-  ![status](foto/status.jpg)
+* **Staf**
+  ![staf](foto/staf.jpg)
 
 ---
 
