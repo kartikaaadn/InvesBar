@@ -1,4 +1,3 @@
-
 # 📦 InvesBar – Sistem Informasi Inventaris Barang
 
 **InvesBar** adalah aplikasi web yang digunakan untuk mencatat dan mengelola inventaris barang serta proses peminjaman dan pengembalian di lingkungan organisasi. Sistem ini dikembangkan menggunakan **PHP Native** dan **MySQL**, serta dilengkapi fitur manajemen pengguna, peminjaman barang, dan backup otomatis. Selain itu, sistem ini mengimplementasikan **stored procedure**, **trigger**, **transaction**, dan **stored function** untuk menjaga integritas dan efisiensi data.
@@ -9,29 +8,33 @@
 
 ## ✨ Fitur Utama
 
-- 👥 Manajemen pengguna (admin & staf)
-- 📦 Manajemen data barang (CRUD)
-- 📝 Peminjaman dan pengembalian barang
-- 🔄 Pemrosesan otomatis melalui trigger dan procedure
-- 💾 Backup database otomatis via script
-- 🔐 Login aman dengan bcrypt
+* 👥 Manajemen pengguna (admin & staf)
+* 📦 Manajemen data barang (CRUD)
+* 🗑️ Peminjaman dan pengembalian barang
+* 🔄 Pemrosesan otomatis melalui trigger dan procedure
+* 📂 Backup database otomatis via script
+* 🔐 Login aman dengan bcrypt
 
 ---
 
 ## 🗃 Struktur Tabel
 
-- **users**: Menyimpan data pengguna dan role (admin/staf)
-- **barang**: Menyimpan data inventaris barang
-- **peminjaman**: Menyimpan data transaksi peminjaman dan pengembalian barang
+* **users**: Menyimpan data pengguna dan role (admin/staf)
+* **barang**: Menyimpan data inventaris barang
+* **peminjaman**: Menyimpan data transaksi peminjaman dan pengembalian barang
 
 ---
 
 ## ⚙ Stored Procedure
-Procedure `pinjam_barang` digunakan untuk mencatat transaksi peminjaman dan otomatis mengurangi stok barang jika stok mencukupi.
 
-sql
+### 📌 1. pinjam\_barang
+
+Stored procedure ini digunakan untuk menambahkan peminjaman baru dan otomatis mengurangi stok barang yang dipinjam.
+
+**SQL:**
+
+```sql
 DELIMITER //
-
 CREATE PROCEDURE pinjam_barang (
     IN p_id_user INT,
     IN p_id_barang INT,
@@ -52,35 +55,22 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stok tidak mencukupi.';
     END IF;
 END //
-
 DELIMITER ;
-`
+```
 
+**Lokasi File:** `staf/pinjam.php`
 
-Procedure `pinjam_barang` digunakan untuk mencatat transaksi peminjaman dan otomatis mengurangi stok barang jika stok mencukupi.
-📌 1. pinjam_barang
-Stored procedure ini digunakan untuk menambahkan peminjaman baru dan otomatis mengurangi stok barang yang dipinjam.
+**Pemanggilan di PHP:**
 
-Lokasi File:
-staf/pinjam.php
-
-Penjelasan Fungsi:
-pinjam_barang(p_id_user, p_id_barang, p_jumlah, p_tanggal_pinjam)
-Digunakan saat staf melakukan peminjaman barang. Procedure akan menyimpan data peminjaman ke tabel peminjaman dan mengurangi stok barang.
-
-Contoh Pemanggilan di PHP:
-php
-Copy
-Edit
+```php
 <?php
-require '../includes/db.php'; // koneksi ke database
+require '../includes/db.php';
 
 $id_user = $_SESSION['user_id'];
 $id_barang = $_POST['id_barang'];
 $jumlah = $_POST['jumlah'];
 $tanggal_pinjam = date('Y-m-d');
 
-// Call the pinjam_barang stored procedure
 $stmt = $conn->prepare("CALL pinjam_barang(?, ?, ?, ?)");
 $stmt->bind_param("iiis", $id_user, $id_barang, $jumlah, $tanggal_pinjam);
 
@@ -90,29 +80,22 @@ if ($stmt->execute()) {
     echo "❌ Gagal meminjam: " . $conn->error;
 }
 $stmt->close();
-?>
-📌 2. tambah_barang_baru
-Stored procedure ini digunakan untuk menambahkan data barang baru ke tabel barang.
+```
 
-Lokasi File:
-admin/tambah-barang.php
+### 📌 2. tambah\_barang\_baru
 
-Penjelasan Fungsi:
-tambah_barang_baru(p_nama_barang, p_deskripsi, p_stok)
-Memasukkan barang baru ke dalam tabel barang saat admin menambahkan item ke inventaris.
+Stored procedure untuk menambahkan data barang baru.
 
-Contoh Pemanggilan di PHP:
-php
-Copy
-Edit
+**SQL Call di PHP:**
+
+```php
 <?php
-require '../includes/db.php'; // koneksi ke database
+require '../includes/db.php';
 
 $nama_barang = $_POST['nama_barang'];
 $deskripsi = $_POST['deskripsi'];
 $stok = $_POST['stok'];
 
-// Call the tambah_barang_baru stored procedure
 $stmt = $conn->prepare("CALL tambah_barang_baru(?, ?, ?)");
 $stmt->bind_param("ssi", $nama_barang, $deskripsi, $stok);
 
@@ -122,20 +105,20 @@ if ($stmt->execute()) {
     echo "❌ Gagal menambahkan barang: " . $conn->error;
 }
 $stmt->close();
-?>
-`
+```
 
-📸 **Disarankan Screenshot:** `assets/img/stored-procedure-peminjama`
+**📸 Screenshot:** `assets/img/stored-procedure-peminjama`
 
 ---
 
 ## 🔄 Trigger
 
-Trigger `kembalikan_barang` akan menambah stok barang secara otomatis saat status peminjaman diubah menjadi "dikembalikan".
+Trigger `kembalikan_barang` otomatis menambah stok saat status peminjaman diubah jadi "dikembalikan".
 
-sql
+**SQL:**
+
+```sql
 DELIMITER //
-
 CREATE TRIGGER kembalikan_barang
 AFTER UPDATE ON peminjaman
 FOR EACH ROW
@@ -146,66 +129,61 @@ BEGIN
         WHERE id = OLD.id_barang;
     END IF;
 END //
-
 DELIMITER ;
+```
 
-penjelasan tentang triggernya
+**Penjelasan Trigger:**
 
-Trigger kurangi_stok_setelah_transaksi secara otomatis aktif setiap kali sistem melakukan proses pencatatan transaksi baru di tabel transaksi:
+* Otomatis mengurangi/mengembalikan stok
+* Menjamin konsistensi antara tabel transaksi dan stok
+* Mencegah manipulasi manual stok
+* Mengurangi beban validasi di aplikasi PHP
 
-✅ Contoh pemicu aktivasi trigger:
-sql
-Copy
-Edit
+**Contoh Aktivasi:**
+
+```sql
 INSERT INTO transaksi (id_barang, jumlah, tanggal_transaksi, keterangan)
 VALUES (3, 2, CURDATE(), 'Peminjaman proyektor untuk rapat mingguan');
-🔄 Beberapa peran trigger ini dalam sistem:
-Otomatis mengurangi stok barang
-Saat transaksi dicatat (misalnya barang digunakan/peminjaman), trigger langsung mengurangi nilai stok di tabel barang berdasarkan id_barang dan jumlah yang tercatat.
+```
 
-Menjamin konsistensi antara transaksi dan stok barang
-Meskipun sistem frontend atau aplikasi lupa memperbarui stok, trigger ini akan memastikan perubahan tetap dilakukan secara otomatis dan sinkron.
-
-Mencegah manipulasi stok secara manual dari luar prosedur resmi
-Dengan trigger ini, tidak ada celah untuk menambahkan transaksi namun lupa atau sengaja tidak mengubah stok barang.
-
-Mengurangi beban logika validasi di aplikasi (PHP)
-Karena logika pengurangan stok terjadi langsung di database, aplikasi tidak perlu menangani proses ini secara eksplisit, meningkatkan reliabilitas sistem.
-
-
-📸 **Disarankan Screenshot:** `assets/img/trigger-kembalikan.png`
+**📸 Screenshot:** `assets/img/trigger-kembalikan.png`
 
 ---
 
 ## 🔁 Transaction (PHP)
 
-Untuk menjamin konsistensi data saat melakukan peminjaman barang, digunakan konsep transaksi dalam PHP.
+Menjamin konsistensi data saat peminjaman barang.
 
-php
-mysqli_begin_transaction($conn);
+**Contoh PHP:**
+
+```php
+<?php
+require '../config/koneksi.php';
+
+$conn->begin_transaction();
 
 try {
     mysqli_query($conn, $query_insert);
     mysqli_query($conn, $query_update_stok);
-
     mysqli_commit($conn);
 } catch (Exception $e) {
     mysqli_rollback($conn);
     echo "Gagal melakukan peminjaman.";
 }
+```
 
-
-📸 **Disarankan Screenshot:** `assets/img/transaction-php.png`
+**📸 Screenshot:** `assets/img/transaction-php.png`
 
 ---
 
 ## 🧠 Stored Function
 
-Function `total_barang_dipinjam` mengembalikan total jumlah barang yang sedang dipinjam oleh satu pengguna.
+Function `total_barang_dipinjam` mengembalikan jumlah total barang yang sedang dipinjam oleh user.
 
-sql
+**SQL:**
+
+```sql
 DELIMITER //
-
 CREATE FUNCTION total_barang_dipinjam(p_user_id INT)
 RETURNS INT
 DETERMINISTIC
@@ -216,69 +194,56 @@ BEGIN
     WHERE id_user = p_user_id AND status = 'dipinjam';
     RETURN IFNULL(total, 0);
 END //
-
 DELIMITER ;
+```
 
-ini penjelasan untuk function
+**Tampilan (dashboard\_user.php):**
 
-📄 Lokasi Tampilan: dashboard_user.php
-php
-Copy
-Edit
+```php
 $totalPinjam = $peminjamanModel->totalPeminjamanUser($userId);
-html
-Copy
-Edit
+```
+
+```html
 <div class="text-center mt-3">
     <h5>Total Peminjaman</h5>
     <p class="fw-bold fs-4"><?= $totalPinjam ?> barang</p>
 </div>
+```
 
-💼 Validasi Stok di Procedure pinjam_barang
-sql
-Copy
-Edit
+**Validasi stok:**
+
+```sql
 SET v_stok = get_stok_barang(p_id_barang);
-
 IF v_stok < p_jumlah THEN
     SIGNAL SQLSTATE '45000'
-    SET MESSAGE_TEXT = 'Stok barang tidak mencukupi',
-        MYSQL_ERRNO = 1647;
+    SET MESSAGE_TEXT = 'Stok barang tidak mencukupi', MYSQL_ERRNO = 1647;
 END IF;
+```
 
-
-📸 **Disarankan Screenshot:** `assets/img/function-total-pinjaman.png`
+**📸 Screenshot:** `assets/img/function-total-pinjaman.png`
 
 ---
 
 ## 🗂 Backup Otomatis
 
+**Script Bash:**
+
+```bash
 #!/bin/bash
 
-# Nama database
 DB_NAME="invesbar_db"
-
-# Nama user MySQL
 DB_USER="root"
-
-# Password MySQL (jika kosong, hapus bagian -p)
 DB_PASS="YourPassword"
-
-# Lokasi folder backup (buat folder ini jika belum ada)
 BACKUP_DIR="/home/username/backup/invesbar"
-
-# Format nama file: invesbar_YYYY-MM-DD-HHMM.sql
 TIMESTAMP=$(date +"%F-%H%M")
 BACKUP_FILE="$BACKUP_DIR/invesbar_${TIMESTAMP}.sql"
 
-# Eksekusi backup
 mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_FILE
 
-# Konfirmasi
 echo "Backup selesai: $BACKUP_FILE"
+```
 
-
-📸 **Disarankan Screenshot:** `assets/img/backup-script.png`
+**📸 Screenshot:** `assets/img/backup-script.png`
 
 ---
 
@@ -300,8 +265,8 @@ echo "Backup selesai: $BACKUP_FILE"
 * PHP Native
 * MySQL
 * HTML, CSS (Bootstrap)
-* JavaScript (sedikit interaksi)
-* phpMyAdmin (untuk manajemen DB)
+* JavaScript (interaksi sederhana)
+* phpMyAdmin
 
 ---
 
@@ -309,21 +274,22 @@ echo "Backup selesai: $BACKUP_FILE"
 
 1. **Clone repositori:**
 
-   bash
-   git clone https://github.com/kartikaaadn/InvesBar.git
-   
+```bash
+git clone https://github.com/kartikaaadn/InvesBar.git
+```
 
 2. **Import database:**
 
-   * Buka `phpMyAdmin` → Import file `invesbar_db.sql`.
+   * Buka `phpMyAdmin`
+   * Import file `invesbar_db.sql`
 
 3. **Edit koneksi database di `config/koneksi.php`:**
 
-   php
-   $conn = new mysqli("localhost", "root", "", "invesbar_db");
-   
+```php
+$conn = new mysqli("localhost", "root", "", "invesbar_db");
+```
 
-4. **Jalankan di browser:**
+4. **Akses di browser:**
 
    * Buka `http://localhost/InvesBar/`
 
@@ -333,5 +299,4 @@ echo "Backup selesai: $BACKUP_FILE"
 
 * kartikaadn
 * dwiandini01
-* Chelseayetri
-
+* chelseayetri
