@@ -149,6 +149,29 @@ END //
 
 DELIMITER ;
 
+penjelasan tentang triggernya
+
+Trigger kurangi_stok_setelah_transaksi secara otomatis aktif setiap kali sistem melakukan proses pencatatan transaksi baru di tabel transaksi:
+
+✅ Contoh pemicu aktivasi trigger:
+sql
+Copy
+Edit
+INSERT INTO transaksi (id_barang, jumlah, tanggal_transaksi, keterangan)
+VALUES (3, 2, CURDATE(), 'Peminjaman proyektor untuk rapat mingguan');
+🔄 Beberapa peran trigger ini dalam sistem:
+Otomatis mengurangi stok barang
+Saat transaksi dicatat (misalnya barang digunakan/peminjaman), trigger langsung mengurangi nilai stok di tabel barang berdasarkan id_barang dan jumlah yang tercatat.
+
+Menjamin konsistensi antara transaksi dan stok barang
+Meskipun sistem frontend atau aplikasi lupa memperbarui stok, trigger ini akan memastikan perubahan tetap dilakukan secara otomatis dan sinkron.
+
+Mencegah manipulasi stok secara manual dari luar prosedur resmi
+Dengan trigger ini, tidak ada celah untuk menambahkan transaksi namun lupa atau sengaja tidak mengubah stok barang.
+
+Mengurangi beban logika validasi di aplikasi (PHP)
+Karena logika pengurangan stok terjadi langsung di database, aplikasi tidak perlu menangani proses ini secara eksplisit, meningkatkan reliabilitas sistem.
+
 
 📸 **Disarankan Screenshot:** `assets/img/trigger-kembalikan.png`
 
