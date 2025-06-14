@@ -107,7 +107,7 @@ if ($stmt->execute()) {
 $stmt->close();
 ```
 
-**📸 Screenshot:** `assets/img/stored-procedure-peminjama`
+**📸 Screenshot:** `assets/img/peminjaman`
 
 ---
 
