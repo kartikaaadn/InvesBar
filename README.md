@@ -174,32 +174,29 @@ DELIMITER ;
 
 ## 🗂 Backup Otomatis
 
-Sistem ini menyediakan script shell untuk melakukan backup database otomatis, cocok dijalankan via **crontab** di server Linux/WSL.
-
-bash
 #!/bin/bash
 
+# Nama database
 DB_NAME="invesbar_db"
+
+# Nama user MySQL
 DB_USER="root"
+
+# Password MySQL (jika kosong, hapus bagian -p)
 DB_PASS="YourPassword"
+
+# Lokasi folder backup (buat folder ini jika belum ada)
 BACKUP_DIR="/home/username/backup/invesbar"
+
+# Format nama file: invesbar_YYYY-MM-DD-HHMM.sql
 TIMESTAMP=$(date +"%F-%H%M")
 BACKUP_FILE="$BACKUP_DIR/invesbar_${TIMESTAMP}.sql"
 
-mkdir -p "$BACKUP_DIR"
-mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > "$BACKUP_FILE"
+# Eksekusi backup
+mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > $BACKUP_FILE
 
-if [ $? -eq 0 ]; then
-    echo "✅ Backup selesai: $BACKUP_FILE"
-else
-    echo "❌ Backup gagal!"
-fi
-
-
-📅 **Jadwal via crontab:**
-
-bash
-0 2 * * * /bin/bash /home/username/scripts/backup_invesbar.sh
+# Konfirmasi
+echo "Backup selesai: $BACKUP_FILE"
 
 
 📸 **Disarankan Screenshot:** `assets/img/backup-script.png`
