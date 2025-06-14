@@ -309,7 +309,7 @@ bash
   ![dasboard](foto/dashboard.jpg)
 
 * **Riwayat Pengembalian**
-  ![status_peminjaman](foto/status_peminjaman.jpg)
+  ![status](foto/status.jpg)
 
 ---
 
