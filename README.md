@@ -168,7 +168,6 @@ $stmt->close();
 
 
 ```
-**📸 Screenshot:** ![peminjaman](foto/peminjman.jpg)
 ### 📌 2. tambah\_barang\_baru
 
 Stored procedure untuk menambahkan data barang baru.
@@ -194,7 +193,7 @@ if ($stmt->execute()) {
 $stmt->close();
 ```
 
-**📸 Screenshot:** `assets/img/peminjaman`
+**📸 Screenshot:** ![peminjaman](foto/peminjman.jpg)
 
 ---
 
