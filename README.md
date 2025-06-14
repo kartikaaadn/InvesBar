@@ -57,7 +57,6 @@ BEGIN
 END //
 DELIMITER ;\
 ```
-![peminjaman](foto/peminjman.jpg)
 
 **Lokasi File:** `staf/pinjam.php`
 
@@ -81,6 +80,9 @@ if ($stmt->execute()) {
     echo "❌ Gagal meminjam: " . $conn->error;
 }
 $stmt->close();
+
+![peminjaman](foto/peminjman.jpg)
+
 ```
 
 ### 📌 2. tambah\_barang\_baru
