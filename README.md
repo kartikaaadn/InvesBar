@@ -350,5 +350,6 @@ bash
 
 ## 👩‍💻 Developer
 
-* Kartika AADN
-* 
+* kartikaaadn
+* dwiandini01
+* Chelseayetri
