@@ -55,8 +55,9 @@ BEGIN
         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stok tidak mencukupi.';
     END IF;
 END //
-DELIMITER ;
+DELIMITER ;\
 ```
+![peminjaman](foto/peminjman.jpg)
 
 **Lokasi File:** `staf/pinjam.php`
 
