@@ -96,7 +96,7 @@ $stmt->close();
 ?>
 `
 
-📸 **Disarankan Screenshot:** `assets/img/stored-procedure-peminjaman`
+📸 **Disarankan Screenshot:** `assets/img/stored-procedure-peminjama`
 
 ---
 
