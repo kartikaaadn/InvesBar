@@ -165,10 +165,10 @@ if ($stmt->execute()) {
     echo "❌ Gagal meminjam: " . $conn->error;
 }
 $stmt->close();
- ![peminjaman](foto/peminjman.jpg)
+
 
 ```
-
+**📸 Screenshot:** ![peminjaman](foto/peminjman.jpg)
 ### 📌 2. tambah\_barang\_baru
 
 Stored procedure untuk menambahkan data barang baru.
