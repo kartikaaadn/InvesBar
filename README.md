@@ -232,7 +232,7 @@ INSERT INTO transaksi (id_barang, jumlah, tanggal_transaksi, keterangan)
 VALUES (3, 2, CURDATE(), 'Peminjaman proyektor untuk rapat mingguan');
 ```
 
-**📸 Screenshot:** `assets/img/trigger-kembalikan.png`
+**📸 Screenshot:** ![trigger](foto/trigger.jpg)
 
 ---
 
