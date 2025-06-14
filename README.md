@@ -1,6 +1,3 @@
-Berikut ini adalah teks *README* yang bisa kamu gunakan untuk proyek *InvesBar* di GitHub https://github.com/kartikaaadn/InvesBar, berdasarkan gaya dan struktur contoh yang kamu berikan. Kamu bisa menyesuaikan bagian-bagian tertentu jika ada informasi tambahan mengenai fitur atau teknologi spesifik yang digunakan:
-
----
 
 # InvesBar
 
