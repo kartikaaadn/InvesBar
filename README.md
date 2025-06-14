@@ -306,7 +306,7 @@ IF v_stok < p_jumlah THEN
 END IF;
 ```
 
-**📸 Screenshot:** `assets/img/function-total-pinjaman.png`
+**📸 Screenshot:** ![fungsi](foto/fungsi.jpg)
 
 ---
 
