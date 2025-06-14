@@ -1,193 +1,68 @@
+<?php
+session_start();
+require_once "includes/db.php";
+
+if (isset($_POST['login'])) {
+    $username = $_POST['username'];
+    $password = $_POST['password'];
+
+    $query = mysqli_query($conn, "SELECT * FROM users WHERE username='$username'");
+    $user = mysqli_fetch_assoc($query);
+
+    if ($user && password_verify($password, $user['password'])) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['username'] = $user['username'];
+        $_SESSION['role'] = $user['role'];
+
+        if ($user['role'] === 'admin') {
+            header("Location: admin/dashboard.php");
+        } else {
+            header("Location: staf/dashboard.php");
+        }
+        exit;
+    } else {
+        $error = "Username atau password salah!";
+    }
+}
+?>
+
 <!DOCTYPE html>
 <html lang="id">
-
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - Assetify</title>
-
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
-
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('Photo/bg_login.jpg');
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      color: #333;
-    }
-
-    .form-container {
-      background-color: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(5px);
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      padding: 1.5rem 2rem;
-      border-radius: 15px;
-      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-      width: 100%;
-      max-width: 360px;
-      margin: 1rem;
-    }
-
-    .form-header {
-      text-align: center;
-      margin-bottom: 1.5rem;
-    }
-
-    .logo-container img {
-      width: 180px;
-      height: auto;
-      margin-bottom: 0.5rem;
-    }
-
-    .welcome-title {
-      font-size: 0.9rem;
-      font-weight: 400;
-      color: #777;
-      margin-bottom: 1.5rem;
-    }
-
-    .form-group {
-      margin-bottom: 0.85rem;
-    }
-
-    .form-group label {
-      display: block;
-      font-weight: 500;
-      margin-bottom: 0.4rem;
-      font-size: 0.9rem;
-    }
-
-    .form-group input {
-      width: 100%;
-      padding: 0.6rem 0.75rem;
-      border: 1px solid #dddfe2;
-      border-radius: 6px;
-      font-size: 0.9rem;
-      font-family: 'Poppins', sans-serif;
-      background-color: rgba(255, 255, 255, 0.8);
-    }
-
-    .form-group input:focus {
-      outline: none;
-      border-color: #FFBAED;
-      box-shadow: 0 0 0 2px #ffccf6;
-    }
-
-    .btn {
-      width: 100%;
-      padding: 0.7rem;
-      border: none;
-      border-radius: 6px;
-      font-size: 1rem;
-      font-weight: 600;
-      margin-top: 1rem;
-      transition: background-color 0.2s;
-      background-color: #e0e0e0;
-      color: #a0a0a0;
-      cursor: not-allowed;
-    }
-
-    .btn.enabled {
-      background-color: #FFBAED;
-      color: #333;
-      cursor: pointer;
-    }
-
-    .btn.enabled:hover {
-      background-color: #f7aee0;
-    }
-
-    .form-switch {
-      text-align: center;
-      margin-top: 1rem;
-      font-size: 0.85rem;
-    }
-
-    .form-switch a {
-      color: #E1A0CB;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    .form-switch a:hover {
-      text-decoration: underline;
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Sistem Inventaris</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
+<body class="bg-gradient-to-tr from-purple-200 via-pink-100 to-yellow-100 min-h-screen flex items-center justify-center">
 
-<body>
-  <div class="form-container">
-    <form id="loginForm">
-      <div class="form-header">
-        <div class="logo-container">
-          <img src="Photo/logo.png" alt="Logo Assetify" />
-        </div>
-        <p class="welcome-title">Login untuk mulai</p>
+  <div class="bg-white/80 backdrop-blur-md shadow-xl rounded-2xl px-8 py-10 w-full max-w-md">
+    <h1 class="text-3xl font-extrabold text-center text-purple-700 mb-6 tracking-wide">Login Sistem Inventaris</h1>
+
+    <?php if (isset($error)): ?>
+      <div class="bg-red-200 text-red-800 px-4 py-2 mb-4 rounded text-sm shadow">
+        <?= $error ?>
       </div>
-      <div class="form-group">
-        <label for="username">Username atau Email</label>
-        <input type="text" id="username" name="username" placeholder="Masukkan username/email Anda" required />
-      </div>
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" id="password" name="password" placeholder="Masukkan password Anda" required />
+    <?php endif; ?>
+
+    <form method="POST" class="space-y-5">
+      <div>
+        <label class="block text-gray-600 mb-1 text-sm">Username</label>
+        <input type="text" name="username" required class="w-full px-4 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 transition" />
       </div>
 
-      <button type="submit" id="loginButton" class="btn" disabled>Login</button>
+      <div>
+        <label class="block text-gray-600 mb-1 text-sm">Password</label>
+        <input type="password" name="password" required class="w-full px-4 py-2 border border-purple-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-400 transition" />
+      </div>
 
-      <p class="form-switch">
-        Belum punya akun? <a href="register.html">Register</a>
-      </p>
+      <button type="submit" name="login" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-md font-medium transition duration-200">
+        Masuk
+      </button>
     </form>
+
+    <p class="text-center text-xs text-gray-500 mt-6">© <?= date('Y') ?> Sistem Inventaris Kantor</p>
   </div>
 
-  <script>
-    const usernameInput = document.getElementById('username');
-    const passwordInput = document.getElementById('password');
-    const loginButton = document.getElementById('loginButton');
-
-    function checkFormState() {
-      const isUsernameFilled = usernameInput.value.trim() !== '';
-      const isPasswordFilled = passwordInput.value.trim() !== '';
-      if (isUsernameFilled && isPasswordFilled) {
-        loginButton.disabled = false;
-        loginButton.classList.add('enabled');
-      } else {
-        loginButton.disabled = true;
-        loginButton.classList.remove('enabled');
-      }
-    }
-
-    usernameInput.addEventListener('input', checkFormState);
-    passwordInput.addEventListener('input', checkFormState);
-
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-      e.preventDefault(); // Mencegah reload halaman
-
-      const username = usernameInput.value.trim();
-      const password = passwordInput.value.trim();
-
-      if (username === "admin" && password === "admin123") {
-        window.location.href = "admin-dashboard.html";
-      } else if (username === "user" && password === "user123") {
-        window.location.href = "user-dashboard.html";
-      } else {
-        alert("Username atau password salah!");
-      }
-    });
-  </script>
 </body>
-
 </html>

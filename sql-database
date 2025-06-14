@@ -1,0 +1,79 @@
+-- ===============================
+-- DATABASE: invesbar_db
+-- Struktur Tabel Inventaris Barang
+-- ===============================
+
+CREATE DATABASE IF NOT EXISTS invesbar_db;
+USE invesbar_db;
+
+-- Tabel: users
+CREATE TABLE IF NOT EXISTS users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('admin', 'staf') NOT NULL
+);
+
+-- Tabel: barang
+CREATE TABLE IF NOT EXISTS barang (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nama_barang VARCHAR(100) NOT NULL,
+    deskripsi TEXT,
+    stok INT NOT NULL DEFAULT 0
+);
+
+-- Tabel: peminjaman
+CREATE TABLE IF NOT EXISTS peminjaman (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    id_user INT NOT NULL,
+    id_barang INT NOT NULL,
+    jumlah INT NOT NULL,
+    tanggal_pinjam DATE NOT NULL,
+    tanggal_kembali DATE DEFAULT NULL,
+    status ENUM('dipinjam', 'dikembalikan') NOT NULL,
+    FOREIGN KEY (id_user) REFERENCES users(id),
+    FOREIGN KEY (id_barang) REFERENCES barang(id)
+);
+
+-- ===============================
+-- CONTOH DATA AWAL (OPSIONAL)
+-- ===============================
+-- Password: admin123 (hash bcrypt)
+INSERT INTO users (username, password, role)
+VALUES 
+('admin', '$2y$10$aOImsFzKUc9eimTRW0V5heP.BuPFEH10tNuP0OvFMY4Zcc2/xyUqO', 'admin'),
+('staf1', '$2y$10$EIXYc8LUxqUFeE5UGQa99eHoIpWbI1gnPSBN2mUpCiBslzPbiHT.a', 'staf');
+
+INSERT INTO barang (nama_barang, deskripsi, stok)
+VALUES 
+('Laptop Dell', 'Laptop untuk presentasi dan pekerjaan kantor', 10),
+('Proyektor Epson', 'Proyektor untuk ruang rapat', 5);
+
+-- ===============================
+-- BACKUP OTOMATIS + PENJADWALAN (DOCUMENTATION ONLY)
+-- ===============================
+-- Catatan: Bagian ini hanya untuk cron/scheduler, tidak dijalankan oleh MySQL.
+
+-- FILE: backup_invesbar.sh
+-- Jalankan via crontab atau scheduler server (Linux/WSL)
+-- 0 2 * * * /bin/bash /home/username/scripts/backup_invesbar.sh
+
+/*
+#!/bin/bash
+
+DB_NAME="invesbar_db"
+DB_USER="root"
+DB_PASS="YourPassword"
+BACKUP_DIR="/home/username/backup/invesbar"
+TIMESTAMP=$(date +"%F-%H%M")
+BACKUP_FILE="$BACKUP_DIR/invesbar_${TIMESTAMP}.sql"
+
+mkdir -p "$BACKUP_DIR"
+mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > "$BACKUP_FILE"
+
+if [ $? -eq 0 ]; then
+    echo "✅ Backup selesai: $BACKUP_FILE"
+else
+    echo "❌ Backup gagal!"
+fi
+*/
