@@ -29,31 +29,48 @@
 
 Procedure `pinjam_barang` digunakan untuk mencatat transaksi peminjaman dan otomatis mengurangi stok barang jika stok mencukupi.
 
+
 sql
+Copy
+Edit
 DELIMITER //
 
-CREATE PROCEDURE pinjam_barang (
+CREATE PROCEDURE PinjamBarang(
     IN p_id_user INT,
     IN p_id_barang INT,
-    IN p_jumlah INT,
-    IN p_tanggal DATE
+    IN p_jumlah INT
 )
 BEGIN
-    DECLARE stok_tersedia INT;
+    DECLARE current_stok INT;
 
-    SELECT stok INTO stok_tersedia FROM barang WHERE id = p_id_barang;
+    SELECT stok INTO current_stok FROM barang WHERE id = p_id_barang;
 
-    IF stok_tersedia >= p_jumlah THEN
+    IF current_stok >= p_jumlah THEN
+        START TRANSACTION;
+
+        UPDATE barang 
+        SET stok = stok - p_jumlah
+        WHERE id = p_id_barang;
+
         INSERT INTO peminjaman (id_user, id_barang, jumlah, tanggal_pinjam, status)
-        VALUES (p_id_user, p_id_barang, p_jumlah, p_tanggal, 'dipinjam');
+        VALUES (p_id_user, p_id_barang, p_jumlah, CURDATE(), 'dipinjam');
 
-        UPDATE barang SET stok = stok - p_jumlah WHERE id = p_id_barang;
+        COMMIT;
     ELSE
-        SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Stok tidak mencukupi.';
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Stok tidak mencukupi!';
     END IF;
 END //
 
 DELIMITER ;
+🔧 Contoh pemanggilan:
+
+sql
+Copy
+Edit
+CALL PinjamBarang(2, 1, 2);
+
+   
 `
 📌 1. pinjam_barang
 Stored procedure ini digunakan untuk menambahkan peminjaman baru dan otomatis mengurangi stok barang yang dipinjam.
@@ -121,6 +138,17 @@ if ($stmt->execute()) {
 $stmt->close();
 ?>
 
+✅ 1. Coba Stored Procedure (tambah_barang)
+sql
+
+CALL tambah_barang('BR006', 'Laptop', 'Lenovo ThinkPad', 'gudang', 'baik', 5);
+Lalu cek:
+
+sql
+Copy
+Edit
+SELECT * FROM barang WHERE kode_barang = 'BR006';
+
 ![peminjaman](foto/peminjman.jpg)
 
 ---
@@ -129,21 +157,27 @@ $stmt->close();
 
 Trigger `kembalikan_barang` akan menambah stok barang secara otomatis saat status peminjaman diubah menjadi "dikembalikan".
 
+4. TRIGGER
+Secara otomatis menambah stok kembali saat barang dikembalikan (status berubah menjadi 'dikembalikan'):
+
 sql
+Copy
+Edit
 DELIMITER //
 
-CREATE TRIGGER kembalikan_barang
+CREATE TRIGGER kembalikan_stok
 AFTER UPDATE ON peminjaman
 FOR EACH ROW
 BEGIN
     IF OLD.status = 'dipinjam' AND NEW.status = 'dikembalikan' THEN
         UPDATE barang
-        SET stok = stok + OLD.jumlah
-        WHERE id = OLD.id_barang;
+        SET stok = stok + NEW.jumlah
+        WHERE id = NEW.id_barang;
     END IF;
 END //
 
 DELIMITER ;
+
 
 
 penjelasan tentang triggernya
@@ -169,48 +203,70 @@ Dengan trigger ini, tidak ada celah untuk menambahkan transaksi namun lupa atau 
 Mengurangi beban logika validasi di aplikasi (PHP)
 Karena logika pengurangan stok terjadi langsung di database, aplikasi tidak perlu menangani proses ini secara eksplisit, meningkatkan reliabilitas sistem.
 
----
-![trigger](foto/trigger.jpg)
+✅ 3. Coba Trigger (after_pengembalian)
+Update status dari dipinjam ke dikembalikan di tabel peminjaman:
 
+sql
+Copy
+Edit
+UPDATE peminjaman 
+SET status = 'dikembalikan', tanggal_kembali = CURDATE() 
+WHERE id = 1;
+Lalu cek apakah stok barang dengan id_barang = 2 bertambah kembali:
+
+sql
+Copy
+Edit
+SELECT stok FROM barang WHERE id = 2;
+
+---
 
 ## 🔁 Transaction (PHP)
 
 Untuk menjamin konsistensi data saat melakukan peminjaman barang, digunakan konsep transaksi dalam PHP.
+sql
+Copy
+Edit
+-- Transaksi untuk meminjam barang
+START TRANSACTION;
 
-php
-mysqli_begin_transaction($conn);
+-- Cek stok terlebih dahulu (logika ini biasanya ditangani di aplikasi PHP juga)
+UPDATE barang
+SET stok = stok - 2
+WHERE id = 1 AND stok >= 2;
 
-try {
-    mysqli_query($conn, $query_insert);
-    mysqli_query($conn, $query_update_stok);
+-- Masukkan data peminjaman jika stok cukup
+INSERT INTO peminjaman (id_user, id_barang, jumlah, tanggal_pinjam, status)
+VALUES (2, 1, 2, CURDATE(), 'dipinjam');
 
-    mysqli_commit($conn);
-} catch (Exception $e) {
-    mysqli_rollback($conn);
-    echo "Gagal melakukan peminjaman.";
-}
+-- Commit transaksi jika semua berhasil
+COMMIT;
 
-ini kode penjelasan untuk transaction 
+✅ 4. Coba Transaction Manual (uji rollback)
+sql
+Copy
+Edit
+START TRANSACTION;
 
-// contoh di peminjaman.php
-try {
-    $conn->beginTransaction();
+-- Pinjam barang dengan id_barang 5 sebanyak 2
+UPDATE barang SET stok = stok - 2 WHERE id = 5;
 
-    $stmt = $conn->prepare("CALL pinjam_barang(?, ?, ?, ?)");
-    $stmt->execute([
-        $id_user,     // dari session atau form
-        $id_barang,   // dari pilihan user
-        $jumlah,      // input jumlah
-        date('Y-m-d') // tanggal sekarang
-    ]);
+-- Simpan ke peminjaman
+INSERT INTO peminjaman (id_user, id_barang, jumlah, tanggal_pinjam, status) 
+VALUES (2, 5, 2, CURDATE(), 'dipinjam');
 
-    $conn->commit();
-    echo "Peminjaman berhasil.";
-} catch (PDOException $e) {
-    $conn->rollBack();
-    echo "Gagal: " . $e->getMessage();
-}
+-- Jika tidak ada error:
+COMMIT;
 
+-- Jika ada error:
+-- ROLLBACK;
+Cek kembali:
+
+sql
+Copy
+Edit
+SELECT * FROM barang WHERE id = 5;
+SELECT * FROM peminjaman WHERE id_barang = 5 ORDER BY id DESC LIMIT 1;
 
 ---
 
@@ -218,19 +274,31 @@ try {
 
 Function `total_barang_dipinjam` mengembalikan total jumlah barang yang sedang dipinjam oleh satu pengguna.
 
+. FUNCTION
+Menghitung total pinjaman user:
+
 sql
+Copy
+Edit
 DELIMITER //
 
-CREATE FUNCTION total_barang_dipinjam(p_user_id INT)
+CREATE FUNCTION TotalPinjamanUser(uid INT)
 RETURNS INT
 DETERMINISTIC
 BEGIN
     DECLARE total INT;
-    SELECT SUM(jumlah) INTO total
-    FROM peminjaman
-    WHERE id_user = p_user_id AND status = 'dipinjam';
-    RETURN IFNULL(total, 0);
+    SELECT COUNT(*) INTO total FROM peminjaman WHERE id_user = uid;
+    RETURN total;
 END //
+
+DELIMITER ;
+🔧 Contoh penggunaan:
+
+sql
+Copy
+Edit
+SELECT TotalPinjamanUser(2) AS total_peminjaman;
+
 
 DELIMITER ;
 
@@ -261,8 +329,13 @@ IF v_stok < p_jumlah THEN
         MYSQL_ERRNO = 1647;
 END IF;
 
+✅ 2. Coba Function (get_stok_barang)
+sql
+Copy
+Edit
+SELECT get_stok_barang(3) AS stok_laptop_asus;
+Jika keluar angka 10 (sesuai stok id=3), maka fungsi berjalan baik.
 
-![fungsi](foto/fungsi.jpg)
 ---
 
 ## 🗂 Backup Otomatis
