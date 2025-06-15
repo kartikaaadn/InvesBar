@@ -149,8 +149,6 @@ Copy
 Edit
 SELECT * FROM barang WHERE kode_barang = 'BR006';
 
-![peminjaman](foto/peminjman.jpg)
-
 ---
 
 ## 🔄 Trigger
@@ -381,6 +379,12 @@ bash
 
 * **Staf**
   ![staf](foto/staf.jpg)
+  
+* **Database**
+  ![database](foto/database.jpg)
+
+   ![ad](foto/ad.jpg)
+  
 
 ---
 
