@@ -210,13 +210,12 @@ Copy
 Edit
 UPDATE peminjaman 
 SET status = 'dikembalikan', tanggal_kembali = CURDATE() 
-WHERE id = 1;
-Lalu cek apakah stok barang dengan id_barang = 2 bertambah kembali:
+WHERE id = 3;
 
 sql
 Copy
 Edit
-SELECT stok FROM barang WHERE id = 2;
+SELECT stok FROM barang WHERE id = 5;
 
 ---
 
@@ -248,13 +247,10 @@ sql
 Copy
 Edit
 START TRANSACTION;
-
--- Pinjam barang dengan id_barang 5 sebanyak 2
 UPDATE barang SET stok = stok - 2 WHERE id = 5;
 
--- Simpan ke peminjaman
 INSERT INTO peminjaman (id_user, id_barang, jumlah, tanggal_pinjam, status) 
-VALUES (2, 5, 2, CURDATE(), 'dipinjam');
+VALUES (2, 3, 3, CURDATE(), 'dipinjam');
 
 -- Jika tidak ada error:
 COMMIT;
@@ -332,8 +328,8 @@ END IF;
 sql
 Copy
 Edit
+
 SELECT get_stok_barang(3) AS stok_laptop_asus;
-Jika keluar angka 10 (sesuai stok id=3), maka fungsi berjalan baik.
 
 ---
 
