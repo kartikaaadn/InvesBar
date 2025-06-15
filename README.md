@@ -29,7 +29,7 @@
 
 Procedure `pinjam_barang` digunakan untuk mencatat transaksi peminjaman dan otomatis mengurangi stok barang jika stok mencukupi.
 
-
+## Code 
 sql
 Copy
 Edit
@@ -61,8 +61,9 @@ BEGIN
         SET MESSAGE_TEXT = 'Stok tidak mencukupi!';
     END IF;
 END //
-
 DELIMITER ;
+
+
 🔧 Contoh pemanggilan:
 
 sql
@@ -153,11 +154,9 @@ SELECT * FROM barang WHERE kode_barang = 'BR006';
 
 ## 🔄 Trigger
 
-Trigger `kembalikan_barang` akan menambah stok barang secara otomatis saat status peminjaman diubah menjadi "dikembalikan".
-
-4. TRIGGER
 Secara otomatis menambah stok kembali saat barang dikembalikan (status berubah menjadi 'dikembalikan'):
 
+## Code 
 sql
 Copy
 Edit
@@ -188,6 +187,8 @@ Copy
 Edit
 INSERT INTO transaksi (id_barang, jumlah, tanggal_transaksi, keterangan)
 VALUES (3, 2, CURDATE(), 'Peminjaman proyektor untuk rapat mingguan');
+
+
 🔄 Beberapa peran trigger ini dalam sistem:
 Otomatis mengurangi stok barang
 Saat transaksi dicatat (misalnya barang digunakan/peminjaman), trigger langsung mengurangi nilai stok di tabel barang berdasarkan id_barang dan jumlah yang tercatat.
@@ -222,6 +223,8 @@ SELECT stok FROM barang WHERE id = 2;
 ## 🔁 Transaction (PHP)
 
 Untuk menjamin konsistensi data saat melakukan peminjaman barang, digunakan konsep transaksi dalam PHP.
+
+## Code 
 sql
 Copy
 Edit
@@ -269,10 +272,7 @@ SELECT * FROM peminjaman WHERE id_barang = 5 ORDER BY id DESC LIMIT 1;
 ---
 
 ## 🧠 Stored Function
-
-Function `total_barang_dipinjam` mengembalikan total jumlah barang yang sedang dipinjam oleh satu pengguna.
-
-. FUNCTION
+FUNCTION
 Menghitung total pinjaman user:
 
 sql
