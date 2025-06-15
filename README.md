@@ -275,6 +275,7 @@ SELECT * FROM peminjaman WHERE id_barang = 5 ORDER BY id DESC LIMIT 1;
 FUNCTION
 Menghitung total pinjaman user:
 
+## Code 
 sql
 Copy
 Edit
