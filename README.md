@@ -353,8 +353,9 @@ mysqldump -u $DB_USER -p$DB_PASS $DB_NAME > "$BACKUP_FILE"
 if [ $? -eq 0 ]; then
     echo "✅ Backup selesai: $BACKUP_FILE"
 else
-    echo "❌ Backup gagal!"
+    echo "❌ Backup gagal!"
 fi
+*/
 
 
 📅 **Jadwal via crontab:**
